@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "621725763428",
+    "project_id": "it-high-school-app",
+    "storage_bucket": "it-high-school-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:621725763428:android:c8dbb14ce59de302b71c71",
+        "android_client_info": {
+          "package_name": "net.artificialwusslab.it_mirai_androidapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "621725763428-l51rmarvsfi5atpsg6jq3pavmf3k1ati.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp3uAQC68CG8q4g8L0XU4LZBa0ZDIynq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "621725763428-l51rmarvsfi5atpsg6jq3pavmf3k1ati.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
