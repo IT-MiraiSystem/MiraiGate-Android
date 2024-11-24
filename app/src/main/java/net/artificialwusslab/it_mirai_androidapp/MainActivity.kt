@@ -1,53 +1,55 @@
 package net.artificialwusslab.it_mirai_androidapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
-import coil.compose.SubcomposeAsyncImage
+import com.example.yourapp.TopPage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
+@Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
     private var auth: FirebaseAuth? = null
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
-    private var TAG = "I活Info"
-
+    private var TAG = R.string.app_name.toString()
+    private var Access_Token: String? = null
+    public var User: HashMap<String, String?>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         auth = Firebase.auth
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
-            .setHostedDomain("it-mirai-h.ibk.ed.jp")
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         window.statusBarColor = Color.Black.toArgb()
-        if(auth?.currentUser != null){
+        Access_Token=API.post("AuthDevice", hashMapOf("DeviceName" to R.string.DeviceName.toString(),"Pass" to R.string.Pass.toString()),null.toString())[0]
+        if (auth?.currentUser != null) {
             //メイン画面を表示する
             setContent {
                 ITmiraiAndroidAppTheme {
@@ -59,14 +61,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }else{
+        } else {
             //トップ画面を表示する
             setContent {
                 ITmiraiAndroidAppTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         TopPage(
-                            modifier = Modifier.padding(innerPadding)
-                            ,onLoginClick = { signIn() }
+                            modifier = Modifier.padding(innerPadding), onLoginClick = { signIn() }
                         )
                     }
                 }
@@ -74,35 +75,156 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                // Sign-in succeeded, navigate to the main screen
-                setContent {
-                    ITmiraiAndroidAppTheme {
-                        val navController = rememberNavController()
-                        //アカウントのセットアップ画面を表示する
+                if (account != null) {
+                    Log.i(TAG, "GoogleSignInAccount: ${account.email}")
+                    val idToken = account.idToken
+                    if (idToken != null) {
+                        val credential = GoogleAuthProvider.getCredential(idToken, null)
+                        auth?.signInWithCredential(credential)
+                            ?.addOnCompleteListener(this) { task ->
+                                if (task.isSuccessful) {
+                                    if (account.email?.contains("it-mirai-h.ibk.ed.jp") == true) {
+                                        Log.d(TAG, "signInWithCredential:success")
+                                        val user = auth?.currentUser
+                                        Log.i(TAG, "User: ${user?.uid}")
+                                        val user_search = API.get("SerchUser", hashMapOf("uid" to user?.uid.toString()), Access_Token)
+                                        Log.i(TAG, "UserSearch: ${user_search[0]}" + "ResponseCode: ${user_search[1]}")
+                                        if (user_search[1] == "200") {
+                                            // Display main screen
+                                            setContent {
+                                                ITmiraiAndroidAppTheme {
+                                                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                                        Greeting(
+                                                            name = "Android",
+                                                            modifier = Modifier.padding(innerPadding)
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            val UserInfo = hashMapOf(
+                                                "uid" to user?.uid,
+                                                "name" to user?.displayName,
+                                                "email" to user?.email,
+                                                "photoUrl" to user?.photoUrl.toString()
+                                            )
+                                            // Display new user registration screen
+                                            setContent {
+                                                ITmiraiAndroidAppTheme {
+                                                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                                        NewUser().UI(
+                                                            onDismissRequest = {
+                                                                signOut()
+                                                            },
+                                                            onConfirmation = {
+                                                                //空欄の選択肢があればToastでエラーを出す
+                                                                if (UserInfo["GradleInSchool"] != null || UserInfo["ClassInSchool"] != null || UserInfo["SchoolClub"] != null) {
+                                                                    Log.i(TAG, "UserInfo: $UserInfo")
+                                                                    var response=API.post("NewUser",UserInfo,Access_Token);
+                                                                    Log.i(TAG,"response:"+response[0]+"ResponseCode:"+response[1])
+                                                                    if (response[1]=="200"){
+                                                                        User =UserInfo
+                                                                        setContent{
+                                                                            ITmiraiAndroidAppTheme {
+                                                                                Scaffold(modifier = Modifier.fillMaxSize()) {
+                                                                                    Greeting(
+                                                                                        name = "Android",
+                                                                                        modifier = Modifier.padding(
+                                                                                            innerPadding
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }else{
+                                                                        Toast.makeText(this, "登録に失敗しました", Toast.LENGTH_SHORT).show()
+                                                                    }
+                                                                }else{
+                                                                    Toast.makeText(this, "選択肢を入力してください", Toast.LENGTH_SHORT).show()
+                                                                }
+                                                            },
+                                                            dialogTitle = "新規ユーザー登録",
+                                                            dialogText = "学年、クラス、部活を選択してください",
+                                                            icon = Icons.Default.Info,
+                                                            GradeInSchool = arrayOf("1年", "2年", "3年", "4年"),
+                                                            GradeInSchoolOptionSelected = { option ->
+                                                                UserInfo.apply {
+                                                                    put("GradeInSchool", option)
+                                                                }
+                                                            },
+                                                            ClassInSchool = arrayOf("F", "M"),
+                                                            ClassInSchoolOptionSelected = { option ->
+                                                                UserInfo.apply {
+                                                                    put("ClassInSchool", option)
+                                                                }
+                                                            },
+                                                            SchoolClub = arrayOf(
+                                                                "情報システム部",
+                                                                "情報デザイン部",
+                                                                "eスポーツ部"
+                                                            ),
+                                                            SchoolClubOptionSelected = { option ->
+                                                                UserInfo.apply {
+                                                                    put("SchoolClub", option)
+                                                                }
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                                }
+                            }
+                    } else {
+                        Log.w(TAG, "Google sign in failed: idToken is null")
                     }
+                } else {
+                    Log.w(TAG, "Google sign in failed: account is null")
                 }
             } catch (e: ApiException) {
-                // Sign-in failed, handle the error
+                Log.w(TAG, "Google sign in failed", e)
             }
         }
     }
+
     //Googleアカウントでログイン
     private fun signIn() {
+        Log.d(TAG, "signIn")
         val signInIntent = mGoogleSignInClient.signInIntent
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
-    private fun signOut() {
+    fun signOut() {
         auth?.signOut()
+        setContent {
+            ITmiraiAndroidAppTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    TopPage(
+                        modifier = Modifier.padding(innerPadding), onLoginClick = { signIn() }
+                    )
+                }
+            }
+        }
     }
 
 }
+
+private operator fun Unit.invoke(modifier: Modifier, onLoginClick: () -> Unit) {
+
+}
+
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -119,42 +241,3 @@ fun GreetingPreview() {
     }
 }
 
-@Composable
-fun TopPage(modifier: Modifier = Modifier, onLoginClick: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize() // modifierを使う
-    ) {
-        SubcomposeAsyncImage(
-            model = "https://www.it-mirai-h.ibk.ed.jp/wysiwyg/image/download/1/325/",
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0x99EEEEEE))
-        ) {
-            Text(
-                text = "Welcome to ITmirai",
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.Center)
-            )
-            Button(
-                onClick = onLoginClick,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            ) {
-                Text("Login")
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TopPagePreview() {
-    MaterialTheme {
-        TopPage(onLoginClick = {})
-    }
-}

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "621725763428",
+    "firebase_url": "https://it-high-school-app-default-rtdb.firebaseio.com",
     "project_id": "it-high-school-app",
     "storage_bucket": "it-high-school-app.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "621725763428-9c9m1ofck1v603hbvv095i80fnf4667g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.artificialwusslab.it_mirai_androidapp",
+            "certificate_hash": "3f0a50732783f36d0cad63b4c4f97a6b1e1a5f7b"
+          }
+        },
         {
           "client_id": "621725763428-l51rmarvsfi5atpsg6jq3pavmf3k1ati.apps.googleusercontent.com",
           "client_type": 3
