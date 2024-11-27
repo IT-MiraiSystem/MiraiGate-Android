@@ -58,8 +58,14 @@ class API {
             if(AccessToken!=null) {
                 API().postAPI(pass, param, AccessToken)
             }else{
-                API().postAPI(pass, param, null.toString())
+                API().postAPI(pass, param, null)
             }
         }
     }
+
+    data class JWTResponseType(
+        val status: String,
+        val token: String?,
+        val message: String?
+    )
 }

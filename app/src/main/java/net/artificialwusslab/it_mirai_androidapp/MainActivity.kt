@@ -28,6 +28,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.google.gson.Gson
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
 @Suppress("DEPRECATION")
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
     private var TAG = R.string.app_name.toString()
-    private var Access_Token: String? = null
+    private var tokenResponse: String? = null
+    private var accessToken: String? = null
     public var User: HashMap<String, String?>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +50,19 @@ class MainActivity : ComponentActivity() {
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         window.statusBarColor = Color.Black.toArgb()
-        Access_Token=API.post("AuthDevice", hashMapOf("DeviceName" to R.string.DeviceName.toString(),"Pass" to R.string.Pass.toString()),null.toString())[0]
+        tokenResponse = API.post("AuthDevice", hashMapOf("DeviceName" to resources.getString(R.string.DeviceName),"Pass" to resources.getString(R.string.Pass)),null)[0]
+        accessToken = Gson().fromJson(tokenResponse, API.JWTResponseType::class.java).token
+        Log.d(TAG, "AccessToken: ${accessToken}")
+        //Log.d(TAG, "${hashMapOf("DeviceName" to R.string.DeviceName.toString(),"Pass" to R.string.Pass.toString())}")
+        //Log.d(TAG, "${hashMapOf("DeviceName" to "Android","Pass" to "b1c2e047018b63e8e5a9b393ae72cc99622760a6b38c3e6ca13295ac1cf02191")}")
         if (auth?.currentUser != null) {
             //メイン画面を表示する
+            Log.d(TAG, "こにちはあああ")
             setContent {
                 ITmiraiAndroidAppTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         Greeting(
-                            name = "Android",
+                            name = "Androidaaaaaa",
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
@@ -96,7 +103,7 @@ class MainActivity : ComponentActivity() {
                                         Log.d(TAG, "signInWithCredential:success")
                                         val user = auth?.currentUser
                                         Log.i(TAG, "User: ${user?.uid}")
-                                        val user_search = API.get("SerchUser", hashMapOf("uid" to user?.uid.toString()), Access_Token)
+                                        val user_search = API.get("SerchUser", hashMapOf("uid" to user?.uid.toString()), accessToken)
                                         Log.i(TAG, "UserSearch: ${user_search[0]}" + "ResponseCode: ${user_search[1]}")
                                         if (user_search[1] == "200") {
                                             // Display main screen
@@ -129,7 +136,7 @@ class MainActivity : ComponentActivity() {
                                                                 //空欄の選択肢があればToastでエラーを出す
                                                                 if (UserInfo["GradleInSchool"] != null || UserInfo["ClassInSchool"] != null || UserInfo["SchoolClub"] != null) {
                                                                     Log.i(TAG, "UserInfo: $UserInfo")
-                                                                    var response=API.post("NewUser",UserInfo,Access_Token);
+                                                                    var response = API.post("NewUser",UserInfo,accessToken);
                                                                     Log.i(TAG,"response:"+response[0]+"ResponseCode:"+response[1])
                                                                     if (response[1]=="200"){
                                                                         User =UserInfo
