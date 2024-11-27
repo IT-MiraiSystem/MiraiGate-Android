@@ -1,4 +1,4 @@
-package net.artificialwusslab.it_mirai_androidapp
+package net.artificialwusslab.it_mirai_androidapp.Pages
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.AlertDialog

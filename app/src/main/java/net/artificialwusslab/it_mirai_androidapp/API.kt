@@ -18,18 +18,26 @@ class API {
     private val client = HttpClient()
     private var url: URL = URL("https://artificialwusslab.net/api/ITmiraiApp/")
     private val TAG = "ITmiraiAPI"
-    suspend fun getAPI(pass: String, param: Map<String, String>,AccessToken:String): List<String> {
+    suspend fun getAPI(pass: String, param: Map<String, String>,AccessToken:String?): List<String> {
         val requestParam = param.entries.joinToString("&") { "${it.key}=${it.value}" }
         Log.i(TAG, "Request: $url$pass?$requestParam")
-        val response = client.get("$url$pass?$requestParam") {
-            header("Authorization", "Bearer $AccessToken")
+        if (AccessToken==null) {
+            val response = client.get("$url$pass?$requestParam") {
+            }
+            return "${response.bodyAsText()}^*${response.status.value}".split("^*")
+        }else{
+            val response = client.get("$url$pass?$requestParam") {
+                header("Authorization", "Bearer $AccessToken")
+            }
+            return "${response.bodyAsText()}^*${response.status.value}".split("^*")
         }
-        return "${response.bodyAsText()}^*${response.status.value}".split("^*")
     }
 
     @OptIn(InternalAPI::class)
     suspend fun postAPI(pass: String, param: HashMap<String, String?>,AccessToken:String?): List<String> {
         val requestJson = Gson().toJson(param)
+        Log.i(TAG, "Request: $url$pass")
+        Log.i(TAG, "RequestJson: $requestJson")
         if (AccessToken==null){
             val response: HttpResponse = client.post("$url$pass") {
                 body = requestJson
@@ -51,7 +59,7 @@ class API {
             if (AccessToken!=null){
                 API().getAPI(pass, param,AccessToken)
             }else{
-                API().getAPI(pass, param, null.toString())
+                API().getAPI(pass, param, null)
             }
         }
         fun post(pass: String, param: HashMap<String, String?>,AccessToken: String?): List<String> = runBlocking {
