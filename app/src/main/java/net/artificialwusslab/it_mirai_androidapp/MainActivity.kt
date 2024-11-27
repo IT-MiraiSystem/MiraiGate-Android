@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.yourapp.TopPage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -28,6 +27,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.google.gson.JsonParser
+import net.artificialwusslab.it_mirai_androidapp.Pages.NewUser
+import net.artificialwusslab.it_mirai_androidapp.Pages.TopPage
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
 @Suppress("DEPRECATION")
@@ -35,7 +37,7 @@ class MainActivity : ComponentActivity() {
     private var auth: FirebaseAuth? = null
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 9001
-    private var TAG = R.string.app_name.toString()
+    private lateinit var TAG: String
     private var Access_Token: String? = null
     public var User: HashMap<String, String?>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,21 +45,36 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         auth = Firebase.auth
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(resources.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         window.statusBarColor = Color.Black.toArgb()
-        Access_Token=API.post("AuthDevice", hashMapOf("DeviceName" to R.string.DeviceName.toString(),"Pass" to R.string.Pass.toString()),null.toString())[0]
+        TAG=resources.getString(R.string.app_name)
+        Access_Token= JsonParser.parseString(API.post("AuthDevice", hashMapOf("DeviceName" to resources.getString(R.string.DeviceName),"Pass" to resources.getString(R.string.Pass)),null)[0]).asJsonObject.get("token").asString
+        Log.i(TAG, "Access_Token: $Access_Token")
         if (auth?.currentUser != null) {
             //メイン画面を表示する
-            setContent {
-                ITmiraiAndroidAppTheme {
-                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        Greeting(
-                            name = "Android",
-                            modifier = Modifier.padding(innerPadding)
-                        )
+            val SearchUser=API.get("SerchUser", hashMapOf("uid" to auth?.currentUser?.uid.toString()),Access_Token)
+            if(SearchUser[1]=="200") {
+                setContent {
+                    ITmiraiAndroidAppTheme {
+                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                            Greeting(
+                                name = "Android",
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                    }
+                }
+            }else{
+                signOut()
+                setContent {
+                    ITmiraiAndroidAppTheme {
+                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                            TopPage().UI(
+                                modifier = Modifier.padding(innerPadding), onLoginClick = { signIn() })
+                        }
                     }
                 }
             }
@@ -66,7 +83,7 @@ class MainActivity : ComponentActivity() {
             setContent {
                 ITmiraiAndroidAppTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                        TopPage(
+                        TopPage().UI(
                             modifier = Modifier.padding(innerPadding), onLoginClick = { signIn() }
                         )
                     }
@@ -211,7 +228,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ITmiraiAndroidAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TopPage(
+                    TopPage().UI(
                         modifier = Modifier.padding(innerPadding), onLoginClick = { signIn() }
                     )
                 }
