@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                     ITmiraiAndroidAppTheme {
                         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                             Greeting(
-                                name = "Android",
+                                name = "メイン画面",
                                 modifier = Modifier.padding(innerPadding)
                             )
                         }
@@ -124,7 +124,7 @@ class MainActivity : ComponentActivity() {
                                                 ITmiraiAndroidAppTheme {
                                                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                                                         Greeting(
-                                                            name = "Android",
+                                                            name = "アカウント登録完了画面（すでに存在していた場合）",
                                                             modifier = Modifier.padding(innerPadding)
                                                         )
                                                     }
@@ -157,7 +157,7 @@ class MainActivity : ComponentActivity() {
                                                                             ITmiraiAndroidAppTheme {
                                                                                 Scaffold(modifier = Modifier.fillMaxSize()) {
                                                                                     Greeting(
-                                                                                        name = "Android",
+                                                                                        name = "アカウント登録完了画面",
                                                                                         modifier = Modifier.padding(
                                                                                             innerPadding
                                                                                         )
