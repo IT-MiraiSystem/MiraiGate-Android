@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
                                                             },
                                                             onConfirmation = {
                                                                 //空欄の選択肢があればToastでエラーを出す
-                                                                if (UserInfo["GradleInSchool"] != null || UserInfo["ClassInSchool"] != null || UserInfo["SchoolClub"] != null) {
+                                                                if (UserInfo["GradeInSchool"] != null && UserInfo["ClassInSchool"] != null && UserInfo["SchoolClub"] != null) {
                                                                     Log.i(TAG, "UserInfo: $UserInfo")
                                                                     var response=API.post("NewUser",UserInfo,Access_Token);
                                                                     Log.i(TAG,"response:"+response[0]+"ResponseCode:"+response[1])

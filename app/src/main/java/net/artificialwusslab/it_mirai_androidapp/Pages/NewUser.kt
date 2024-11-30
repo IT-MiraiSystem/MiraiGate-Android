@@ -1,6 +1,11 @@
 package net.artificialwusslab.it_mirai_androidapp.Pages
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -12,7 +17,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 
 class NewUser {
     @Composable
@@ -35,7 +42,7 @@ class NewUser {
         var selectedClass by remember { mutableStateOf<String?>(null) }
         var clubExpanded by remember { mutableStateOf(false) }
         var selectedClub by remember { mutableStateOf<String?>(null) }
-
+        
         AlertDialog(
             icon = {
                 Icon(icon, contentDescription = "Example Icon")
@@ -45,65 +52,69 @@ class NewUser {
             },
             text = {
                 Column {
-                    Text(text = dialogText)
+                    Text(text = dialogText, modifier = Modifier.padding(bottom = 10.dp))
 
                     // 学年の選択
-                    TextButton(onClick = { gradeExpanded = true }) {
+                    TextButton(onClick = { gradeExpanded = true }, modifier = Modifier.fillMaxWidth()) {
                         Text(selectedGrade ?: "学年")
-                    }
-                    DropdownMenu(
-                        expanded = gradeExpanded,
-                        onDismissRequest = { gradeExpanded = false }
-                    ) {
-                        GradeInSchool.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option) },
-                                onClick = {
-                                    selectedGrade = option
-                                    GradeInSchoolOptionSelected(option)
-                                    gradeExpanded = false
-                                }
-                            )
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown Icon")
+                        DropdownMenu(
+                            expanded = gradeExpanded,
+                            onDismissRequest = { gradeExpanded = false }
+                        ) {
+                            GradeInSchool.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        selectedGrade = option
+                                        GradeInSchoolOptionSelected(option)
+                                        gradeExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
 
+
                     // クラスの選択
-                    TextButton(onClick = { classExpanded = true }) {
+                    TextButton(onClick = { classExpanded = true }, modifier = Modifier.fillMaxWidth()) {
                         Text(selectedClass ?: "クラス")
-                    }
-                    DropdownMenu(
-                        expanded = classExpanded,
-                        onDismissRequest = { classExpanded = false }
-                    ) {
-                        ClassInSchool.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option) },
-                                onClick = {
-                                    selectedClass = option
-                                    ClassInSchoolOptionSelected(option)
-                                    classExpanded = false
-                                }
-                            )
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown Icon")
+                        DropdownMenu(
+                            expanded = classExpanded,
+                            onDismissRequest = { classExpanded = false }
+                        ) {
+                            ClassInSchool.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        selectedClass = option
+                                        ClassInSchoolOptionSelected(option)
+                                        classExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
 
                     // 部活の選択
-                    TextButton(onClick = { clubExpanded = true }) {
+                    TextButton(onClick = { clubExpanded = true }, modifier = Modifier.fillMaxWidth()) {
                         Text(selectedClub ?: "部活")
-                    }
-                    DropdownMenu(
-                        expanded = clubExpanded,
-                        onDismissRequest = { clubExpanded = false }
-                    ) {
-                        SchoolClub.forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(option) },
-                                onClick = {
-                                    selectedClub = option
-                                    SchoolClubOptionSelected(option)
-                                    clubExpanded = false
-                                }
-                            )
+                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown Icon")
+                        DropdownMenu(
+                            expanded = clubExpanded,
+                            onDismissRequest = { clubExpanded = false }
+                        ) {
+                            SchoolClub.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        selectedClub = option
+                                        SchoolClubOptionSelected(option)
+                                        clubExpanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -111,12 +122,12 @@ class NewUser {
             onDismissRequest = { onDismissRequest() },
             confirmButton = {
                 TextButton(onClick = { onConfirmation() }) {
-                    Text("OK")
+                    Text("登録")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { onDismissRequest() }) {
-                    Text("Cancel")
+                    Text("キャンセル")
                 }
             }
         )
