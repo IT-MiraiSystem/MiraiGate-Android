@@ -10,6 +10,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import io.ktor.util.InternalAPI
 import kotlinx.coroutines.runBlocking
 import java.net.URL
@@ -24,12 +25,12 @@ class API {
         if (AccessToken==null) {
             val response = client.get("$url$pass?$requestParam") {
             }
-            return "${response.bodyAsText()}^*${response.status.value}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }else{
             val response = client.get("$url$pass?$requestParam") {
                 header("Authorization", "Bearer $AccessToken")
             }
-            return "${response.bodyAsText()}^*${response.status.value}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }
     }
 
@@ -43,14 +44,14 @@ class API {
                 body = requestJson
                 contentType(ContentType.Application.Json)
             }
-            return "${response.bodyAsText()}^*${response.status.value}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }else {
             val response: HttpResponse = client.post("$url$pass") {
                 body = requestJson
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $AccessToken")
             }
-            return "${response.bodyAsText()}^*${response.status.value}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }
     }
 

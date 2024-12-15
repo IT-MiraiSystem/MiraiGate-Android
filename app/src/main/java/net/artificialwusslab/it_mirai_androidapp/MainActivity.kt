@@ -52,9 +52,20 @@ class MainActivity : ComponentActivity() {
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        window.statusBarColor = Color.Black.toArgb()
+        //window.statusBarColor = Color.Black.toArgb()
         TAG=resources.getString(R.string.app_name)
-        Access_Token= JsonParser.parseString(API.post("AuthDevice", hashMapOf("DeviceName" to resources.getString(R.string.DeviceName),"Pass" to resources.getString(R.string.Pass)),null)[0]).asJsonObject.get("token").asString
+        val AuthDeviceReq = API.post("AuthDevice", hashMapOf("DeviceName" to resources.getString(R.string.DeviceName),"Pass" to resources.getString(R.string.Pass)),null)
+        if (AuthDeviceReq[2] == "false") {
+            setContent {
+                ITmiraiAndroidAppTheme {
+                    DialogWrapper().Error(
+                        text = "サーバーエラーが発生しました。\nしばらくしてからもう一度試してください。\n\n詳細:\nAuthDevice\n${AuthDeviceReq[1]}",
+                    )
+                }
+            }
+            return
+        }
+        Access_Token= JsonParser.parseString(AuthDeviceReq[0]).asJsonObject.get("token").asString
         Log.i(TAG, "Access_Token: $Access_Token")
         if (auth?.currentUser != null) {
             //メイン画面を表示する
