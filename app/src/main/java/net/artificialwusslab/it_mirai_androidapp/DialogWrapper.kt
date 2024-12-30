@@ -41,6 +41,7 @@ class DialogWrapper {
                         TextButton(
                             onClick = {
                                 onConfirmation()
+                                show = false
                             }
                         ) {
                             Text("OK")

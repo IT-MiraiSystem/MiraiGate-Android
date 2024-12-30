@@ -17,7 +17,9 @@ import java.net.URL
 
 class API {
     private val client = HttpClient()
-    private var url: URL = URL("https://artificialwusslab.net/api/ITmiraiApp/")
+//    private var url: URL = URL("https://artificialwusslab.net/api/ITmiraiApp/")
+    private var url: URL = URL("http://192.168.2.103:8000/")
+    //private var url: URL = URL("http://joker.f5.si:8000/")
     private val TAG = "ITmiraiAPI"
     suspend fun getAPI(pass: String, param: Map<String, String>,AccessToken:String?): List<String> {
         val requestParam = param.entries.joinToString("&") { "${it.key}=${it.value}" }
@@ -25,12 +27,12 @@ class API {
         if (AccessToken==null) {
             val response = client.get("$url$pass?$requestParam") {
             }
-            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value}^*${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }else{
             val response = client.get("$url$pass?$requestParam") {
                 header("Authorization", "Bearer $AccessToken")
             }
-            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value}^*${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }
     }
 
@@ -44,14 +46,14 @@ class API {
                 body = requestJson
                 contentType(ContentType.Application.Json)
             }
-            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value}^*${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }else {
             val response: HttpResponse = client.post("$url$pass") {
                 body = requestJson
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $AccessToken")
             }
-            return "${response.bodyAsText()}^*${response.status.value} ${response.status.description}^*${response.status.isSuccess()}".split("^*")
+            return "${response.bodyAsText()}^*${response.status.value}^*${response.status.description}^*${response.status.isSuccess()}".split("^*")
         }
     }
 
