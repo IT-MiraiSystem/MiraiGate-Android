@@ -44,8 +44,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
-import net.artificialwusslab.it_mirai_androidapp.Pages.NewUser
-import net.artificialwusslab.it_mirai_androidapp.Pages.TopPage
+import net.artificialwusslab.it_mirai_androidapp.ui.NewUser
+import net.artificialwusslab.it_mirai_androidapp.ui.TopPage
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
 @Suppress("DEPRECATION")

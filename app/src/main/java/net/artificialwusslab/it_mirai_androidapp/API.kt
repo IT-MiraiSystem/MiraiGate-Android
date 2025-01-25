@@ -17,10 +17,8 @@ import java.net.URL
 
 class API {
     private val client = HttpClient()
-//    private var url: URL = URL("https://artificialwusslab.net/api/ITmiraiApp/")
-    private var url: URL = URL("http://192.168.2.103:8100/")
-//    private var url: URL = URL("http://joker.f5.si:8100/")
-    private val TAG = "ITmiraiAPI"
+    private var url: URL = URL("https://core.yarukihaoutide.online/api/")
+    val TAG = "MiraiGate_API"
     suspend fun getAPI(pass: String, param: Map<String, String>,AccessToken:String?): List<String> {
         val requestParam = param.entries.joinToString("&") { "${it.key}=${it.value}" }
         Log.i(TAG, "Request: $url$pass?$requestParam")

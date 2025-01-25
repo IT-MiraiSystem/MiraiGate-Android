@@ -1,7 +1,6 @@
 // TopPage.kt
-package net.artificialwusslab.it_mirai_androidapp.Pages
+package net.artificialwusslab.it_mirai_androidapp.ui
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,9 +13,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,12 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialException
-import com.google.android.gms.common.SignInButton
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import kotlinx.coroutines.launch
 import net.artificialwusslab.it_mirai_androidapp.R
@@ -45,7 +40,7 @@ class TopPage {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
         val credentialManager = CredentialManager.create(context)
-        val TAG = "ITMirai_TopPage"
+        val TAG = "MiraiGate_TopPage"
 
         Box(
             contentAlignment = Alignment.Center,
@@ -114,17 +109,6 @@ class TopPage {
                             modifier = Modifier.size(30.dp).padding(3.dp))
                         Text("Googleでログイン", fontSize = 16.sp, modifier = Modifier.padding(10.dp, 0.dp))
                     }
-//                    AndroidView(
-//                        factory = { ctx: Context ->
-//                            SignInButton(ctx).apply {
-//                                setSize(SignInButton.SIZE_WIDE)
-//                                setOnClickListener { /*onLoginClick()*/ }
-//                            }
-//                        },
-//                        modifier = Modifier
-//                            .align(Alignment.Center)
-//                            .offset(y = 200.dp)
-//                    )
                 }
             }
         }
