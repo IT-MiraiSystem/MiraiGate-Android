@@ -78,3 +78,19 @@ class API {
         val message: String?
     )
 }
+
+object APIPath {
+    const val ping: String = "ping"
+    const val signIn: String = "signin"
+    const val goSchool: String = "GoSchool"
+    const val lessonDetails: String = "LessonDetails"
+    const val userList: String = "userList"
+    const val getIssues: String = "getissues"
+    const val myProfile: String = "myprofile"
+    const val events: String = "events"
+    const val lessonChange: String = "LessonChange"
+    const val insertSubject: String = "InsertSubject"
+    const val issueRegister:String = "issuesRegister"
+    const val getattendance: String = "getattendance"
+    const val insertEvent: String = "InsertEvent"
+}
