@@ -51,7 +51,7 @@ class TopPage {
         modifier: Modifier = Modifier,
         onLoginClick: (GetCredentialResponse) -> Unit = {},
         onAfterAuth: (GetCredentialResponse) -> Unit = {},
-        loginSuccess: Boolean = false
+        loginSuccess: Int = 0
     ) {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
@@ -98,10 +98,36 @@ class TopPage {
                     .fillMaxSize()
                     .offset(y = 200.dp)
             ) {
-                var loginScs by remember { mutableStateOf(false) }
+                var loginScs by remember { mutableStateOf(0) }
                 loginScs = loginSuccess
-                if(loginScs) {
+                if(loginScs == 1) {
                     CircularProgressIndicator(color = Color.White, modifier = Modifier)
+                }
+                else if(loginScs == 2){
+                    return
+                }
+                else if(loginScs == 3){
+                    Button(
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        enabled = false
+                    ) {
+                        Image(
+                            painterResource(R.drawable.google_icon),
+                            contentDescription = "Googleでログイン",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .padding(3.dp)
+                        )
+                        Text(
+                            "Googleでログイン",
+                            fontSize = 16.sp,
+                            modifier = Modifier.padding(10.dp, 0.dp)
+                        )
+                    }
                 }
                 else {
                     Button(
@@ -121,8 +147,6 @@ class TopPage {
                                         request = credentialRequest,
                                         context = context,
                                     )
-                                    //AccountService().onSignInGoogle(result, ComponentActivity())
-                                    //AccountService().onSignInGoogle(result)
                                     onAfterAuth(result)
                                 } catch (e: GetCredentialException) {
                                     Log.e(TAG, "Credential Error.")

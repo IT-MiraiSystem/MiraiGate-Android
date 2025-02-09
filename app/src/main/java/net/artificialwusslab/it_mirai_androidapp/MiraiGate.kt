@@ -18,7 +18,7 @@ import net.artificialwusslab.it_mirai_androidapp.ui.TopPage
 class MiraiGate {
     val TAG: String = "MiraiGate"
     @Composable
-    fun StartPage(pageName: String, modifier: Modifier, onAfterAuth: (GetCredentialResponse) -> Unit = {}, loginSuccess: Boolean = false, myProfile: String = ""){
+    fun StartPage(pageName: String, modifier: Modifier, onAfterAuth: (GetCredentialResponse) -> Unit = {}, loginSuccess: Int = 0, myProfile: List<String> = listOf()){
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = pageName) {
             composable("Top") {
@@ -41,6 +41,6 @@ class MiraiGate {
 //        else if(pageName == "Main"){
 //            navController.navigate("Main")
 //        }
-        Log.i(TAG, myProfile)
+        Log.i(TAG, myProfile.toString())
     }
 }

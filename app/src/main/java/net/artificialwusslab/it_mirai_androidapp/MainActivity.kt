@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialResponse
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.Firebase
@@ -24,7 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GetTokenResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
-import com.google.gson.JsonParser
+import kotlinx.coroutines.async
 import net.artificialwusslab.it_mirai_androidapp.ui.TopPage
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
@@ -44,33 +47,54 @@ class MainActivity : ComponentActivity() {
         if (auth?.currentUser != null) {
             //メイン画面を表示する
             Log.i(TAG, auth?.currentUser.toString())
-            auth?.currentUser?.getIdToken(true)
-                ?.addOnCompleteListener { task ->
-                    var tokens = API.get(APIPath.signIn, hashMapOf(), task.result.token)[0]
-                    println(task.result.token)
-                    setContent {
-                        ITmiraiAndroidAppTheme {
-                            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                                MiraiGate().StartPage(
-                                    "Main",
-                                    modifier = Modifier.padding(innerPadding),
-                                    myProfile = tokens
-                                )
-                            }
-                        }
-                    }
-                }
             setContent {
                 ITmiraiAndroidAppTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         MiraiGate().StartPage(
-                            "Main",
+                            "Top",
                             modifier = Modifier.padding(innerPadding),
-                            onAfterAuth = { credentialres -> onSignInGoogle(credentialres) }
+                            loginSuccess = 2
                         )
                     }
                 }
             }
+
+            auth?.currentUser?.getIdToken(true)
+                ?.addOnCompleteListener { task ->
+                    //var tokens = API.get(APIPath.signIn, hashMapOf(), task.result.token)[0]
+                    var myProfile: List<String> = listOf()
+                    setContent {
+                        ITmiraiAndroidAppTheme {
+                            var loaded by remember { mutableStateOf(false) }
+
+                            LaunchedEffect(Unit) {
+                                myProfile = async {
+                                    AccountService().ServerSignin(task.result.token)
+                                }.await()
+                                Log.d(TAG, task.result.token.toString())
+                                loaded = true
+                            }
+                            if(loaded) {
+                                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                    MiraiGate().StartPage(
+                                        "Main",
+                                        modifier = Modifier.padding(innerPadding),
+                                        myProfile = myProfile
+                                    )
+                                }
+                            }
+                            else {
+                                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                    MiraiGate().StartPage(
+                                        "Top",
+                                        modifier = Modifier.padding(innerPadding),
+                                        loginSuccess = 1
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
         } else {
             //トップ画面を表示する
             setContent {
@@ -123,20 +147,21 @@ class MainActivity : ComponentActivity() {
         Log.i(TAG, "GoogleSignInAccount: ${account.id}, ${account.idToken}")
         val idToken = account.idToken
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        auth?.signInWithCredential(credential)
-            ?.addOnSuccessListener(){ task ->
-                println("Successsssssssss")
-                setContent {
-                    ITmiraiAndroidAppTheme {
-                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                            MiraiGate().StartPage(
-                                "Top",
-                                modifier = Modifier.padding(innerPadding),
-                                loginSuccess = true
-                            )
-                        }
-                    }
+        setContent {
+            ITmiraiAndroidAppTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    MiraiGate().StartPage(
+                        "Top",
+                        modifier = Modifier.padding(innerPadding),
+                        loginSuccess = 3
+                    )
                 }
+            }
+        }
+        auth?.signInWithCredential(credential)
+            ?.addOnSuccessListener(this){ task ->
+                println("Successsssssssss")
+
             }
             ?.addOnCompleteListener(this) { task ->
                 println("Completeeeeees")
@@ -146,17 +171,52 @@ class MainActivity : ComponentActivity() {
                         Log.d(TAG, "signInWithCredential:success")
                         val user = auth?.currentUser
                         Log.i(TAG, "User: ${user?.uid}")
+
+                        setContent {
+                            ITmiraiAndroidAppTheme {
+                                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                    MiraiGate().StartPage(
+                                        "Top",
+                                        modifier = Modifier.padding(innerPadding),
+                                        loginSuccess = 3
+                                    )
+                                }
+                            }
+                        }
+
                         // Display main screen
                         user?.getIdToken(true)
                             ?.addOnCompleteListener { task2 ->
+                                //val token = API.get(APIPath.signIn, hashMapOf(), task2.result.token)[0]
+                                var myProfile: List<String> = listOf()
                                 setContent {
                                     ITmiraiAndroidAppTheme {
-                                        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                                            MiraiGate().StartPage(
-                                                "Main",
-                                                modifier = Modifier.padding(innerPadding),
-                                                myProfile = API.get(APIPath.signIn, hashMapOf(), task2.result.token)[0]
-                                            )
+                                        var loaded by remember { mutableStateOf(false) }
+                                        LaunchedEffect(Unit) {
+                                            myProfile = async {
+                                                AccountService().ServerSignin(task2.result.token)
+                                            }.await()
+
+                                            Log.d(TAG, task2.result.token.toString())
+                                            loaded = true
+                                        }
+                                        if(loaded) {
+                                            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                                MiraiGate().StartPage(
+                                                    "Main",
+                                                    modifier = Modifier.padding(innerPadding),
+                                                    myProfile = myProfile
+                                                )
+                                            }
+                                        }
+                                        else{
+                                            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                                                MiraiGate().StartPage(
+                                                    "Top",
+                                                    modifier = Modifier.padding(innerPadding),
+                                                    loginSuccess = 1
+                                                )
+                                            }
                                         }
                                     }
                                 }
