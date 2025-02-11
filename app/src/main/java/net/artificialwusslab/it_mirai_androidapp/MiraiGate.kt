@@ -30,7 +30,8 @@ class MiraiGate {
             }
             composable("Main") {
                 MainPage().UI(
-                    modifier = modifier
+                    modifier = modifier,
+                    myProfile  = myProfile
                 )
 
             }

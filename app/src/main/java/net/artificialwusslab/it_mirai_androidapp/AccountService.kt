@@ -24,7 +24,6 @@ class AccountService{
     }
 
     suspend fun ServerSignin(idToken: String? = ""): List<String>{
-        delay(100)
         val svTokenReq = API().getAPI(APIPath.signIn, hashMapOf(), idToken)[0]
         val svToken = JsonParser.parseString(svTokenReq).asJsonObject["token"].asString
         Log.d(TAG, svToken)
