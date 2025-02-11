@@ -42,8 +42,6 @@ class MainActivity : ComponentActivity() {
         auth = Firebase.auth
         //Access_Token = JsonParser.parseString(AuthDeviceReq[0]).asJsonObject.get("token").asString
         Log.i(TAG, "Access_Token: $Access_Token")
-//        Log.i(TAG, AccountService().GetFirebaseToken().toString())
-        Log.i(TAG, AccountService().GetFirebaseToken().toString())
         if (auth?.currentUser != null) {
             //メイン画面を表示する
             Log.i(TAG, auth?.currentUser.toString())
@@ -159,10 +157,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         auth?.signInWithCredential(credential)
-            ?.addOnSuccessListener(this){ task ->
-                println("Successsssssssss")
-
-            }
             ?.addOnCompleteListener(this) { task ->
                 println("Completeeeeees")
                 if (task.isSuccessful) {
