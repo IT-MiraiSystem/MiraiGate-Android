@@ -12,27 +12,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,34 +39,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.activity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.ImagePainter
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
-import com.google.gson.JsonParser
 import net.artificialwusslab.it_mirai_androidapp.AccountProfile
 import net.artificialwusslab.it_mirai_androidapp.DialogWrapper
 import net.artificialwusslab.it_mirai_androidapp.MainActivity
-import net.artificialwusslab.it_mirai_androidapp.MiraiGate
 import net.artificialwusslab.it_mirai_androidapp.R
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
@@ -238,14 +224,11 @@ class MainPage : ComponentActivity() {
             composable("LogoutDialog"){
                 DialogWrapper().Logout(onConfirmation = {
                     auth.signOut()
-                    setContent {
-                        ITmiraiAndroidAppTheme {
-                            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                                Text("aaaa", modifier = Modifier.padding(innerPadding))
-                            }
-                        }
-                    }
+                    navController.navigate("MainActivity")
                 })
+            }
+            activity("MainActivity"){
+                activityClass = MainActivity::class
             }
         }
         Dialog(onDismissRequest = { onDismiss() }) {
@@ -316,7 +299,7 @@ class MainPage : ComponentActivity() {
                         }
                         TextButton(
                             onClick = {
-                                //navController.navigate("LogoutDialog")
+                                navController.navigate("LogoutDialog")
                                 //logoutClicked = true
                             },
                             colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),

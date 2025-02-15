@@ -2,11 +2,12 @@ plugins {
     id("com.google.gms.google-services")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 android {
     namespace = "net.artificialwusslab.it_mirai_androidapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "net.artificialwusslab.it_mirai_androidapp"
@@ -51,14 +52,14 @@ android {
 }
 
 dependencies {
-    implementation("io.coil-kt:coil-compose:2.3.0")
-    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
-    implementation("com.google.android.gms:play-services-auth:20.2.0")
-    implementation ("com.google.code.gson:gson:2.11.0")
-    implementation("androidx.credentials:credentials:1.3.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.6")
+    implementation(libs.coil.compose)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.play.services.auth)
+    implementation (libs.gson)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
