@@ -54,6 +54,8 @@ android {
 dependencies {
     implementation(libs.composeSettings.ui)
     implementation(libs.composeSettings.ui.extended)
+    implementation(libs.aboutlibraries.compose.core)
+    implementation(libs.aboutlibraries.compose.m3)
     implementation(libs.coil.compose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.play.services.auth)

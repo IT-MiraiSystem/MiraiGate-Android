@@ -44,7 +44,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.alorma.compose.settings.ui.SettingsMenuLink
-//import com.alorma.compose.settings.ui.SettingsMenuLink
 import net.artificialwusslab.it_mirai_androidapp.R
 
 class SettingsPage {
@@ -89,13 +88,11 @@ class SettingsPage {
                                 "MiraiGate",
                                 modifier = modifier.padding(10.dp, 0.dp),
                                 fontFamily = FontFamily(Font(R.font.novaround)),
-                                color = Color.Black,
                                 fontSize = 30.sp
                             )
                             Text(
                                 "Ver.0.1.0.0",
                                 modifier = modifier.padding(10.dp, 0.dp),
-                                color = Color.Black,
                                 fontSize = 16.sp
                             )
                         }
@@ -239,7 +236,7 @@ class SettingsPage {
                         SettingsMenuLink(
                             modifier = modifier,
                             title = { Text("オープンソースライセンス") },
-                            onClick = {}
+                            onClick = { miraiGateNavController.navigate("Settings/About/OpenLicenses") }
                         )
                         HorizontalDivider(
                             thickness = 2.dp,
