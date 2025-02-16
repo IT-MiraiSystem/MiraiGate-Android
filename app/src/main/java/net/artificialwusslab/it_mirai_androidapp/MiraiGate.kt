@@ -9,10 +9,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.credentials.GetCredentialResponse
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.artificialwusslab.it_mirai_androidapp.ui.MainPage
+import net.artificialwusslab.it_mirai_androidapp.ui.SettingsPage
 import net.artificialwusslab.it_mirai_androidapp.ui.TopPage
 
 class MiraiGate {
@@ -29,11 +31,15 @@ class MiraiGate {
                 )
             }
             composable("Main") {
+                //navController.popBackStack()
                 MainPage().UI(
                     modifier = modifier,
-                    myProfile  = myProfile
+                    myProfile  = myProfile,
+                    miraiGateNavController = navController
                 )
-
+            }
+            composable("Settings"){
+                SettingsPage().UI(miraiGateNavController = navController)
             }
         }
 //        if(pageName == "Top"){

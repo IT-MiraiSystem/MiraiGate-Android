@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.3"
+agp = "8.8.1"
 coilCompose = "2.3.0"
 credentials = "1.3.0"
 firebaseBom = "33.5.1"
@@ -21,6 +21,7 @@ coroutines = "1.8.1"
 playServicesAuth = "21.3.0"
 uiTextGoogleFonts = "1.7.8"
 aboutLibraries = "{latest-version}"
+compose-settings = "2.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +57,9 @@ aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref
 aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose", version.ref = "aboutLibraries" }
 aboutlibraries-compose-m2 = { module = "com.mikepenz:aboutlibraries-compose-m2", version.ref = "aboutLibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+composeSettings-ui = { group = "com.github.alorma.compose-settings", name = "ui-tiles", version.ref = "compose-settings" }
+composeSettings-ui-extended = { group = "com.github.alorma.compose-settings", name = "ui-tiles-extended", version.ref = "compose-settings" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

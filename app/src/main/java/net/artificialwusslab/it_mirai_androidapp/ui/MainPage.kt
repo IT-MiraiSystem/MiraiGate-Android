@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import androidx.navigation.activity
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,6 +63,7 @@ import com.google.gson.Gson
 import net.artificialwusslab.it_mirai_androidapp.AccountProfile
 import net.artificialwusslab.it_mirai_androidapp.DialogWrapper
 import net.artificialwusslab.it_mirai_androidapp.MainActivity
+import net.artificialwusslab.it_mirai_androidapp.MiraiGate
 import net.artificialwusslab.it_mirai_androidapp.R
 import net.artificialwusslab.it_mirai_androidapp.ui.theme.ITmiraiAndroidAppTheme
 
@@ -70,9 +72,10 @@ class MainPage : ComponentActivity() {
     val auth: FirebaseAuth = Firebase.auth
 
     @Composable
-    fun UI(modifier: Modifier = Modifier, myProfile: List<String> = listOf()) {
+    fun UI(modifier: Modifier = Modifier, myProfile: List<String> = listOf(), miraiGateNavController: NavHostController) {
         val userInfos = Gson().fromJson(myProfile[0], AccountProfile::class.java)
         var userInfoShowing by remember{ mutableStateOf(false) }
+        var settingsShowing by remember{ mutableStateOf(false) }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -93,16 +96,21 @@ class MainPage : ComponentActivity() {
                     fontSize = 32.sp
                 )
                 Spacer(modifier = modifier.weight(1f))
-                Icon(
-                    Icons.Filled.Settings,
-                    contentDescription = "設定",
-                    tint = Color.White,
-                    modifier = modifier
-                        .size(35.dp)
-                        .clickable(onClickLabel = "設定") {
-                            userInfoShowing = true
-                        },
-                )
+                IconButton(
+                    onClick = {
+//                        settingsShowing = true
+                        miraiGateNavController.navigate("Settings")
+                    },
+                    modifier = modifier.size(35.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = "設定",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+
                 Spacer(modifier = modifier.padding(start = 10.dp))
                 AsyncImage(
                     model = ImageRequest.Builder(context = LocalContext.current)
@@ -132,9 +140,16 @@ class MainPage : ComponentActivity() {
                 MainPageButton(painterResource(R.drawable.ic_fluent_calendar), cardText = "カレンダー", modifier = modifier)
             }
             if(userInfoShowing) {
-                AccountInfoDialog(userInfos = userInfos, onDismiss = { userInfoShowing = false }, modifier = modifier)
+                AccountInfoDialog(
+                    userInfos = userInfos,
+                    onDismiss = { userInfoShowing = false },
+                    onSettingsClick = { miraiGateNavController.navigate("Settings") },
+                    modifier = modifier
+                )
             }
-
+//            if(settingsShowing){
+//                MiraiGate().StartPage("Settings", modifier = modifier)
+//            }
         }
     }
 
@@ -214,7 +229,7 @@ class MainPage : ComponentActivity() {
     }
 
     @Composable
-    fun AccountInfoDialog(userInfos: AccountProfile, onDismiss: () -> Unit, modifier: Modifier){
+    fun AccountInfoDialog(userInfos: AccountProfile, onDismiss: () -> Unit, onSettingsClick: () -> Unit, modifier: Modifier){
         var logoutClicked by remember { mutableStateOf(false) }
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "dummy") {
@@ -231,6 +246,7 @@ class MainPage : ComponentActivity() {
                 activityClass = MainActivity::class
             }
         }
+
         Dialog(onDismissRequest = { onDismiss() }) {
             Card(
                 modifier = modifier
@@ -285,7 +301,10 @@ class MainPage : ComponentActivity() {
                         Text(userInfos.email + "", textAlign = TextAlign.Center, fontSize = 13.sp)
                         Spacer(modifier = Modifier.padding(bottom = 20.dp))
                         TextButton(
-                            onClick = {},
+                            onClick = {
+                                onDismiss()
+                                onSettingsClick()
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 5.dp)
